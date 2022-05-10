@@ -18,9 +18,12 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("GetOffers")]
-        public async Task<IEnumerable<TripDto>> GetOffers(/* parametry */)
+        public async Task<IEnumerable<TripDto>> GetOffers(string startDate, string endDate, string departure, string destination, int adults, int children_under_3, int children_under_10, int children_under_18)
         {
-            var response = await _client.GetResponse<GetOffersReplyEvent>(new GetOffersEvent("Albania", DateTime.Now, DateTime.Now, 3));
+            var beginDat = DateTime.ParseExact(startDate, "MM-dd-yyyy", null);
+            var endDat = DateTime.ParseExact(endDate, "MM-dd-yyyy", null);
+
+            var response = await _client.GetResponse<GetOffersReplyEvent>(new GetOffersEvent(destination, beginDat, endDat, adults+children_under_3+children_under_10+children_under_18));
             return response.Message.Trips;
         }
     }
