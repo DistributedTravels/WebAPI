@@ -22,8 +22,10 @@ namespace WebAPI.Controllers
         {
             var beginDat = DateTime.ParseExact(startDate, "MM-dd-yyyy", null);
             var endDat = DateTime.ParseExact(endDate, "MM-dd-yyyy", null);
-
-            var response = await _client.GetResponse<GetOffersReplyEvent>(new GetOffersEvent(destination, beginDat, endDat, adults+children_under_3+children_under_10+children_under_18));
+            var request = new GetOffersEvent(destination, departure, beginDat, endDat, adults + children_under_3 + children_under_10 + children_under_18, adults, children_under_3, children_under_10, children_under_18);
+            var response = await _client.GetResponse<GetOffersReplyEvent>(request);
+            //responseUnused.Dispose();
+            //var response = await _client.GetResponse<GetOffersReplyEvent>(new CheckGetOffersEvent() { CorrelationId = request.CorrelationId });
             return response.Message.Trips;
         }
     }
