@@ -37,6 +37,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
+        [Route("SayHello")]
+        public async Task<String> SayHello()
+        {
+            return "Hello";
+        }
+
+        [HttpGet]
         [Route("CheckOfferAvailability")]
         public async Task<CheckOfferAvailabilityResponse> CheckOfferAvailability(string startDate, string endDate, int hotelId, int transportId, 
             int adults, int children_under_3, int children_under_10, int children_under_18, int number_of_2_room, 
