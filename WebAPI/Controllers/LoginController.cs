@@ -36,16 +36,14 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [Route("Auth")]
-        public IActionResult Auth(string login, string pw)
+        public IActionResult Auth([FromBody] LoginInformation loginInfo)
         {
             var valid = false;
-            login =  HttpUtility.UrlDecode(login, Encoding.UTF8);
-            pw = HttpUtility.UrlDecode(pw, Encoding.UTF8);
             // check for valid login credentials
             Guid found = Guid.Parse("00000000-0000-0000-0000-000000000000");
             foreach(var user in users)
             {
-                if(user.Password == pw && user.UserName == login)
+                if(user.Password == loginInfo.Password && user.UserName == loginInfo.Login)
                 {
                     valid = true;
                     found = user.UserId;
