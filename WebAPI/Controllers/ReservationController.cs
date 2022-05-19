@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
                 ChildrenUnder10 = reservationInformation.Children_under_10,
                 ChildrenUnder18 = reservationInformation.Children_under_18,
                 BigRooms = reservationInformation.Number_of_apartments,
-                SmallRooms = reservationInformation.Number_of_2_rooms,
+                SmallRooms = reservationInformation.Number_of_2_room,
                 HasInternet = hasInternet,
                 HasBreakfast = hasBreakfast,
                 HasOwnTransport = hasOwnTransport,

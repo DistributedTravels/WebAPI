@@ -26,7 +26,11 @@ namespace WebAPI.Controllers
                 ExpDate = paymentInformation.ExpDate,
                 FullName = paymentInformation.FullName
             };
-            var request = new PaymentInformationForReservationEvent(card, 0);
+            var request = new PaymentInformationForReservationEvent(card, 0)
+            {
+                CorrelationId = paymentInformation.ReservationId,
+                Id = paymentInformation.ReservationId
+            };
             var response = await _client.GetResponse<PaymentInformationForReservationReplyEvent>(request);
             return response.Message.CorrelationId;
         }
