@@ -16,7 +16,7 @@ public class ReservationInformation
     public int TransportId { get; set; }
     public string UserId { get; set; } 
     public int Number_of_apartments { get; set; }
-    public int Number_of_2_rooms { get; set; }
+    public int Number_of_2_room { get; set; }
     public string Wifi { get; set; }
     public string Breakfast { get; set; }
     public string Transport { get; set; }
