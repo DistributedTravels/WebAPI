@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
         [Route("Reserve")]
         public async Task<ReserveOfferReplyEvent> Reserve([FromBody] ReservationInformation reservationInformation)
         {
-            var userId = Guid.NewGuid();
+            var userId = Guid.Parse(reservationInformation.UserId);
             var hasInternet = reservationInformation.Wifi.Equals("Tak");
             var hasBreakfast = reservationInformation.Breakfast.Equals("Tak");
             var hasOwnTransport = !reservationInformation.Transport.Equals("Samolot");
