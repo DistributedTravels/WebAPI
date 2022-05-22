@@ -14,7 +14,7 @@ public class ReservationInformation
     public int Children_under_18 { get; set; }
     public int HotelId { get; set; }
     public int TransportId { get; set; }
-    public string UserId { get; set; } 
+    /* public Guid userId,*/
     public int Number_of_apartments { get; set; }
     public int Number_of_2_room { get; set; }
     public string Wifi { get; set; }
