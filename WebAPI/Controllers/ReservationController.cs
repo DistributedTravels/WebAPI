@@ -3,6 +3,7 @@ using MassTransit;
 using Models.Offers;
 using Models.Offers.Dto;
 using Models.Reservations;
+using Models.Reservations.Dto;
 
 namespace WebAPI.Controllers
 {
@@ -12,11 +13,14 @@ namespace WebAPI.Controllers
     {
         readonly IRequestClient<ReserveOfferEvent> _reservationClient;
         readonly IRequestClient<AskForReservationStatusEvent> _reservationStatusClient;
+        readonly IRequestClient<GetReservationsFromDatabaseEvent> _getReservationsClient;
 
-        public ReservationController(IRequestClient<ReserveOfferEvent> reservationClient, IRequestClient<AskForReservationStatusEvent> reservationStatusClient)
+        public ReservationController(IRequestClient<ReserveOfferEvent> reservationClient, IRequestClient<AskForReservationStatusEvent> reservationStatusClient,
+            IRequestClient<GetReservationsFromDatabaseEvent> getReservationsClient)
         {
             _reservationClient = reservationClient;
             _reservationStatusClient = reservationStatusClient;
+            _getReservationsClient = getReservationsClient;
         }
 
         [HttpPost]
@@ -29,6 +33,7 @@ namespace WebAPI.Controllers
             var hasOwnTransport = !reservationInformation.Transport.Equals("Samolot");
             var beginDateDate = DateTime.ParseExact(reservationInformation.StartDate, "MM-dd-yyyy", null);
             var endDateDate = DateTime.ParseExact(reservationInformation.EndDate, "MM-dd-yyyy", null);
+            var hasPromotionCode = reservationInformation.PromotionCode.Equals("abcd");
             var reservationId = Guid.NewGuid();
             var request = new ReserveOfferEvent()
             {
@@ -39,6 +44,7 @@ namespace WebAPI.Controllers
                 UserId = userId,
                 TransportId = reservationInformation.TransportId,
                 HotelId = reservationInformation.HotelId,
+                HotelName = reservationInformation.HotelName,
                 Destination = reservationInformation.Destination,
                 Departure = reservationInformation.Departure,
                 BeginDate = beginDateDate,
@@ -53,7 +59,8 @@ namespace WebAPI.Controllers
                 HasBreakfast = hasBreakfast,
                 HasOwnTransport = hasOwnTransport,
                 NumberOfPeople = reservationInformation.Adults + reservationInformation.Children_under_3 
-                    + reservationInformation.Children_under_10 + reservationInformation.Children_under_18
+                    + reservationInformation.Children_under_10 + reservationInformation.Children_under_18,
+                HasPromotionCode = hasPromotionCode
             };
             var response = await _reservationClient.GetResponse<ReserveOfferReplyEvent>(request);
             return response.Message;
@@ -71,6 +78,15 @@ namespace WebAPI.Controllers
             };
             var response = await _reservationStatusClient.GetResponse<AskForReservationStatusReplyEvent>(request);
             return response.Message;
+        }
+        [HttpGet]
+        [Route("GetReservations")]
+        public async Task<IEnumerable<ReservationDto>> GetReservations(string userId)
+        {
+            var userGuid = Guid.Parse(userId);
+            var response = await _getReservationsClient.GetResponse<GetReservationsFromDatabaseReplyEvent>(new GetReservationsFromDatabaseEvent() { CorrelationId = Guid.NewGuid(), UserId = userGuid });
+            var reservations = response.Message.Reservations;
+            return reservations;
         }
     }
 }
