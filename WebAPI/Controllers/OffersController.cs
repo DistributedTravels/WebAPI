@@ -57,6 +57,10 @@ namespace WebAPI.Controllers
             var hasOwnTransport = !transport.Equals("Samolot");
             var hasBreakfast = breakfast.Equals("Tak");
             var hasInternet = wifi.Equals("Tak");
+            double hotelPrice = 0.0;
+            double travelPrice = 0.0;
+            var hotelsAvailable = false;
+            var transportAvailable = false;
             var hotelsRequest = new GetInfoFromHotelEvent(hotelId: hotelId,
                 beginDate: beginDateDate, endDate: endDateDate, appartmentsAmount: number_of_apartments, 
                 casualRoomAmount: number_of_2_room, breakfast: hasBreakfast, wifi: hasInternet)
@@ -65,22 +69,26 @@ namespace WebAPI.Controllers
                 CorrelationId = hotelsAskId
             };
             var hotelsResponse = await _hotelsClient.GetResponse<GetInfoFromHotelEventReply>(hotelsRequest);
-            var travelsRequest = new GetAvailableTravelsEvent() { TravelId = transportId, Id = travelsAskId, CorrelationId = travelsAskId, FreeSeats = numberOfPeople };
-            var travelsResponse = await _travelsClient.GetResponse<GetAvailableTravelsReplyEvent>(travelsRequest);
-            var hotelsAvailable = hotelsResponse.Message.Answer == GetInfoFromHotelEventReply.State.CAN_BE_RESERVED;
-            var transportAvailable = travelsResponse.Message.TravelItems.Count() > 0;
-            int freeSeats = 0;
-            double hotelPrice = 0;
-            double travelPrice = 0;
-            if (transportAvailable)
-            {
-                var travelReceived = travelsResponse.Message.TravelItems.ToArray()[0];
-                transportAvailable = travelReceived.AvailableSeats >= numberOfPeople;
-                travelPrice = travelReceived.Price * numberOfPeople;
-            }
-            if(hotelsAvailable)
+            hotelsAvailable = hotelsResponse.Message.Answer == GetInfoFromHotelEventReply.State.CAN_BE_RESERVED;
+            if (hotelsAvailable)
             {
                 hotelPrice = hotelsResponse.Message.Price;
+            }
+            if (!hasOwnTransport)
+            {
+                var travelsRequest = new GetAvailableTravelsEvent() { TravelId = transportId, Id = travelsAskId, CorrelationId = travelsAskId, FreeSeats = numberOfPeople };
+                var travelsResponse = await _travelsClient.GetResponse<GetAvailableTravelsReplyEvent>(travelsRequest);
+                transportAvailable = travelsResponse.Message.TravelItems.Count() > 0;
+                if (transportAvailable)
+                {
+                    var travelReceived = travelsResponse.Message.TravelItems.ToArray()[0];
+                    transportAvailable = travelReceived.AvailableSeats >= numberOfPeople;
+                    travelPrice = travelReceived.Price * numberOfPeople;
+                }
+            }
+            else
+            {
+                transportAvailable = true;
             }
             bool offerAvailable = transportAvailable && hotelsAvailable;
             // TODO check if price not too high
