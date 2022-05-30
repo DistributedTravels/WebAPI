@@ -3,6 +3,7 @@
     public class EventMessage
     {
         public string User { get; set; }
-        public string Message { get; set; }
+        public string Destination { get; set; }
+        public string HotelName { get; set; }
     }
 }
