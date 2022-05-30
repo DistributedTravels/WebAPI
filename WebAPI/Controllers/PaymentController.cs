@@ -12,8 +12,8 @@ namespace WebAPI.Controllers
     public class PaymentController : ControllerBase
     {
         readonly IRequestClient<PaymentInformationForReservationEvent> _client;
-        readonly Hub<EventHub> _eventHub;
-        public PaymentController(IRequestClient<PaymentInformationForReservationEvent> client, Hub<EventHub> eventHub)
+        readonly IHubContext<EventHub> _eventHub;
+        public PaymentController(IRequestClient<PaymentInformationForReservationEvent> client, IHubContext<EventHub> eventHub)
         {
             _client = client;
             _eventHub = eventHub;
@@ -44,7 +44,7 @@ namespace WebAPI.Controllers
         public async Task SendEvent()
         {
             var message = new EventMessage() { Message = "whatever", User = "Ala MaKota" };
-            await _eventHub.Clients.All.SendMessage(message);
+            await _eventHub.Clients.All.SendAsync("EventMessage", message);
         }
     }
 }

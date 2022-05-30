@@ -12,6 +12,7 @@ builder.Services.AddCors(options =>
         policy.SetIsOriginAllowed(x => true)
             .AllowAnyHeader()
             .AllowAnyMethod()
+            .WithOrigins("http://localhost:44438")
             .AllowCredentials();
     });
 });
@@ -45,15 +46,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapHub<EventHub>("/hubs/events");
-});
+
 app.UseAuthorization();
 
 app.UseCors();
 
-app.MapControllers();
+app.MapHub<EventHub>("/hubs/events");
 
+app.MapControllers();
 
 app.Run();
