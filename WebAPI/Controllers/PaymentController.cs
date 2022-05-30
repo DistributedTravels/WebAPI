@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MassTransit;
 using Models.Payments;
+using WebAPI.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace WebAPI.Controllers
 {
@@ -10,9 +12,11 @@ namespace WebAPI.Controllers
     public class PaymentController : ControllerBase
     {
         readonly IRequestClient<PaymentInformationForReservationEvent> _client;
-        public PaymentController(IRequestClient<PaymentInformationForReservationEvent> client)
+        readonly Hub<EventHub> _eventHub;
+        public PaymentController(IRequestClient<PaymentInformationForReservationEvent> client, Hub<EventHub> eventHub)
         {
             _client = client;
+            _eventHub = eventHub;
         }
 
         [HttpPost]
@@ -33,6 +37,14 @@ namespace WebAPI.Controllers
             };
             var response = await _client.GetResponse<PaymentInformationForReservationReplyEvent>(request);
             return response.Message.CorrelationId;
+        }
+
+        [HttpPost]
+        [Route("SendEvent")]
+        public async Task SendEvent()
+        {
+            var message = new EventMessage() { Message = "whatever", User = "Ala MaKota" };
+            await _eventHub.Clients.All.SendMessage(message);
         }
     }
 }

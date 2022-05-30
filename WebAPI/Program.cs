@@ -1,5 +1,6 @@
 using WebAPI;
 using MassTransit;
+using WebAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +15,11 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
-
+builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddMassTransit(cfg =>
 {
     cfg.UsingRabbitMq((context, rabbitCfg) =>
@@ -45,7 +45,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<EventHub>("/hubs/events");
+});
 app.UseAuthorization();
 
 app.UseCors();
