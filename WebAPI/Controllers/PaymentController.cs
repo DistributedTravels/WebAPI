@@ -43,7 +43,7 @@ namespace WebAPI.Controllers
         [Route("SendEvent")]
         public async Task SendEvent()
         {
-            var message = new EventMessage() { Message = "whatever", User = "Ala MaKota" };
+            var message = new EventMessage() { Destination = "Grecja", User = "Ala MaKota" , HotelName = "Hotel Acharavi Mare" };
             await _eventHub.Clients.All.SendAsync("EventMessage", message);
         }
     }

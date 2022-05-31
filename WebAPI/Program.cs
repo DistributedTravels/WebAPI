@@ -1,6 +1,7 @@
 using WebAPI;
 using MassTransit;
 using WebAPI.Hubs;
+using WebAPI.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMassTransit(cfg =>
 {
+    cfg.AddConsumer<NewReservationSuccessfullyBookedEventConsumer>(context =>
+    {
+        context.UseMessageRetry(r => r.Interval(3, 1000));
+        context.UseInMemoryOutbox();
+    });
     cfg.UsingRabbitMq((context, rabbitCfg) =>
     {
         rabbitCfg.Host("rabbitmq", "/", h =>
