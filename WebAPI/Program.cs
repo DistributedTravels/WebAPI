@@ -2,6 +2,7 @@ using WebAPI;
 using MassTransit;
 using WebAPI.Hubs;
 using WebAPI.Consumers;
+using WebAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
+builder.Services.AddSingleton<ITopDestinationsRepository, TopDestinationsRepository>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMassTransit(cfg =>
 {
