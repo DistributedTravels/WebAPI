@@ -14,7 +14,7 @@
             {
                 actualNumber = _destinations.Count();
             }
-            var topDestinations = _destinations.OrderBy(x => x.Value).Select(x => x.Key).Take(actualNumber).ToList();
+            var topDestinations = _destinations.OrderByDescending(x => x.Value).Select(x => x.Key).Take(actualNumber).ToList();
             // add empty elements if number was greater than count
             for(int i = actualNumber; i < number; i++)
             {
