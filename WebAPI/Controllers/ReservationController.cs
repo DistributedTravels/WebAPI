@@ -4,6 +4,8 @@ using Models.Offers;
 using Models.Offers.Dto;
 using Models.Reservations;
 using Models.Reservations.Dto;
+using WebAPI.Repositories;
+using WebAPI.Hubs;
 
 namespace WebAPI.Controllers
 {
@@ -14,13 +16,15 @@ namespace WebAPI.Controllers
         readonly IRequestClient<ReserveOfferEvent> _reservationClient;
         readonly IRequestClient<AskForReservationStatusEvent> _reservationStatusClient;
         readonly IRequestClient<GetReservationsFromDatabaseEvent> _getReservationsClient;
+        readonly ITopDestinationsRepository _topDestinationsRepository;
 
         public ReservationController(IRequestClient<ReserveOfferEvent> reservationClient, IRequestClient<AskForReservationStatusEvent> reservationStatusClient,
-            IRequestClient<GetReservationsFromDatabaseEvent> getReservationsClient)
+            IRequestClient<GetReservationsFromDatabaseEvent> getReservationsClient, ITopDestinationsRepository topDestinationsRepository)
         {
             _reservationClient = reservationClient;
             _reservationStatusClient = reservationStatusClient;
             _getReservationsClient = getReservationsClient;
+            _topDestinationsRepository = topDestinationsRepository;
         }
 
         [HttpPost]
@@ -87,6 +91,14 @@ namespace WebAPI.Controllers
             var response = await _getReservationsClient.GetResponse<GetReservationsFromDatabaseReplyEvent>(new GetReservationsFromDatabaseEvent() { CorrelationId = Guid.NewGuid(), UserId = userGuid });
             var reservations = response.Message.Reservations;
             return reservations;
+        }
+
+        [HttpGet]
+        [Route("TopDestinations")]
+        public async Task<TopDestinationsMessage> TopDestinations()
+        {
+            var topDestinations = _topDestinationsRepository.GetTopDestinations(3);
+            return new TopDestinationsMessage() { TopDestinations = topDestinations };
         }
     }
 }
