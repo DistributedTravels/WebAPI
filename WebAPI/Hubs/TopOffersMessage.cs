@@ -2,6 +2,6 @@
 {
     public class TopOffersMessage
     {
-        public IEnumerable<TopOffer> TopOffers;
+        public IEnumerable<TopOffer> TopOffers { get; set; }
     }
 }
