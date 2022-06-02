@@ -22,6 +22,7 @@ builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<ITopDestinationsRepository, TopDestinationsRepository>();
+builder.Services.AddSingleton<ITopOffersRepository, TopOffersRepository>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMassTransit(cfg =>
 {
