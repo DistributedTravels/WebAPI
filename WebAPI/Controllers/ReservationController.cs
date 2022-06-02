@@ -105,10 +105,10 @@ namespace WebAPI.Controllers
         }
         [HttpGet]
         [Route("TopOffers")]
-        public async Task<IEnumerable<string>> TopOffers()
+        public async Task<TopOffersMessage> TopOffers()
         {
             var topOffers = _topOffersRepository.GetTopOffers(3);
-            return /*new TopOffersMessage() { TopOffers = topOffers }*/ topOffers.Select(x => x.HotelName).ToList();
+            return new TopOffersMessage() { TopOffers = topOffers };
         }
     }
 }

@@ -38,7 +38,7 @@ namespace WebAPI.Consumers
                 await _eventHub.Clients.All.SendAsync("TopDestinationsMessage", topDestinationsMessage);
             }
             var oldTopOffers = _offersRepository.GetTopOffers(3);
-            _offersRepository.AddOffer((hotelName, bigRooms > smallRooms, hasOwnTransport));
+            _offersRepository.AddOffer(new TopOffer() { HotelName = hotelName, PrefersBigRooms = bigRooms > smallRooms, HasOwnTransport = hasOwnTransport });
             var newTopOffers = _offersRepository.GetTopOffers(3);
             if(!oldTopOffers.SequenceEqual(newTopOffers))
             {

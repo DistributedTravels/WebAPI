@@ -2,6 +2,6 @@
 {
     public class TopOffersMessage
     {
-        public IEnumerable<(string HotelName, bool PrefersBigRooms, bool HasOwnTransport)> TopOffers;
+        public IEnumerable<TopOffer> TopOffers;
     }
 }

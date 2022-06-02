@@ -1,13 +1,15 @@
-﻿namespace WebAPI.Repositories
+﻿using WebAPI.Hubs;
+
+namespace WebAPI.Repositories
 {
     public class TopOffersRepository : ITopOffersRepository
     {
-        private Dictionary<(string HotelName, bool PrefersBigRooms, bool HasOwnTransport), int> _offers;
+        private Dictionary<TopOffer, int> _offers;
         public TopOffersRepository()
         {
-            _offers = new Dictionary<(string, bool, bool), int>();
+            _offers = new Dictionary<TopOffer, int>();
         }
-        public IEnumerable<(string HotelName, bool PrefersBigRooms, bool HasOwnTransport)> GetTopOffers(int number)
+        public IEnumerable<TopOffer> GetTopOffers(int number)
         {
             var actualNumber = number;
             if (number > _offers.Count)
@@ -17,17 +19,23 @@
             var topOffers = _offers.OrderByDescending(x => x.Value).Select(x => x.Key).Take(actualNumber).ToList();
             for(int i = actualNumber; i < number; i++)
             {
-                topOffers.Add(("", false, false));
+                topOffers.Add(new TopOffer() { HotelName = "", PrefersBigRooms = false, HasOwnTransport = false });
             }
             return topOffers;
         }
-        public void AddOffer((string HotelName, bool PrefersBigRooms, bool HasOwnTransport) offer)
+        public void AddOffer(TopOffer offer)
         {
-            if(_offers.ContainsKey(offer))
+            bool containsOffer = false;
+            foreach(var knownOffer in _offers)
             {
-                _offers[offer] += 1;
+                if(knownOffer.Key.HotelName.Equals(offer.HotelName) && knownOffer.Key.PrefersBigRooms == offer.PrefersBigRooms
+                    && knownOffer.Key.HasOwnTransport == offer.HasOwnTransport)
+                {
+                    containsOffer = true;
+                    _offers[knownOffer.Key] += 1;
+                }
             }
-            else
+            if(!containsOffer)
             {
                 _offers.Add(offer, 1);
             }
