@@ -10,10 +10,13 @@ namespace WebAPI.Consumers
     {
         readonly IHubContext<EventHub> _eventHub;
         private readonly ITopDestinationsRepository _destinationsRepository;
-        public NewReservationSuccessfullyBookedEventConsumer(IHubContext<EventHub> eventHub, ITopDestinationsRepository destinationsRepository)
+        private readonly ITopOffersRepository _offersRepository;
+        public NewReservationSuccessfullyBookedEventConsumer(IHubContext<EventHub> eventHub, ITopDestinationsRepository destinationsRepository,
+            ITopOffersRepository topOffersRepository)
         {
             _eventHub = eventHub;
             _destinationsRepository = destinationsRepository;
+            _offersRepository = topOffersRepository;
         }
 
         public async Task Consume(ConsumeContext<NewReservationSuccessfullyBookedEvent> context)
@@ -33,6 +36,14 @@ namespace WebAPI.Consumers
             {
                 var topDestinationsMessage = new TopDestinationsMessage() { TopDestinations = newTopDestinations };
                 await _eventHub.Clients.All.SendAsync("TopDestinationsMessage", topDestinationsMessage);
+            }
+            var oldTopOffers = _offersRepository.GetTopOffers(3);
+            _offersRepository.AddOffer((hotelName, bigRooms > smallRooms, hasOwnTransport));
+            var newTopOffers = _offersRepository.GetTopOffers(3);
+            if(!oldTopOffers.SequenceEqual(newTopOffers))
+            {
+                var topOffersMessage = new TopOffersMessage() { TopOffers = newTopOffers };
+                await _eventHub.Clients.All.SendAsync("TopOffersMessage", topOffersMessage);
             }
         }
     }

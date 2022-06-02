@@ -17,14 +17,17 @@ namespace WebAPI.Controllers
         readonly IRequestClient<AskForReservationStatusEvent> _reservationStatusClient;
         readonly IRequestClient<GetReservationsFromDatabaseEvent> _getReservationsClient;
         readonly ITopDestinationsRepository _topDestinationsRepository;
+        readonly ITopOffersRepository _topOffersRepository;
 
         public ReservationController(IRequestClient<ReserveOfferEvent> reservationClient, IRequestClient<AskForReservationStatusEvent> reservationStatusClient,
-            IRequestClient<GetReservationsFromDatabaseEvent> getReservationsClient, ITopDestinationsRepository topDestinationsRepository)
+            IRequestClient<GetReservationsFromDatabaseEvent> getReservationsClient, ITopDestinationsRepository topDestinationsRepository,
+            ITopOffersRepository topOffersRepository)
         {
             _reservationClient = reservationClient;
             _reservationStatusClient = reservationStatusClient;
             _getReservationsClient = getReservationsClient;
             _topDestinationsRepository = topDestinationsRepository;
+            _topOffersRepository = topOffersRepository;
         }
 
         [HttpPost]
@@ -99,6 +102,13 @@ namespace WebAPI.Controllers
         {
             var topDestinations = _topDestinationsRepository.GetTopDestinations(3);
             return new TopDestinationsMessage() { TopDestinations = topDestinations };
+        }
+        [HttpGet]
+        [Route("TopOffers")]
+        public async Task<TopOffersMessage> TopOffers()
+        {
+            var topOffers = _topOffersRepository.GetTopOffers(3);
+            return new TopOffersMessage() { TopOffers = topOffers };
         }
     }
 }
