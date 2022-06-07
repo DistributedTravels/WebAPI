@@ -32,6 +32,11 @@ builder.Services.AddMassTransit(cfg =>
         context.UseMessageRetry(r => r.Interval(3, 1000));
         context.UseInMemoryOutbox();
     });
+    cfg.AddConsumer<ChangedOfferEventConsumer>(context =>
+    {
+        context.UseMessageRetry(r => r.Interval(3, 1000));
+        context.UseInMemoryOutbox();
+    });
     cfg.UsingRabbitMq((context, rabbitCfg) =>
     {
         rabbitCfg.Host("rabbitmq", "/", h =>
