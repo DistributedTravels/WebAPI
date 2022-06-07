@@ -114,7 +114,7 @@ namespace WebAPI.Controllers
         [Route("AddChanges")]
         public async Task AddChanges([FromBody] ChangesInOffersEvent change)
         {
-            _changesInOffersClient.GetResponse<>
+            _changesInOffersClient.GetResponse<ChangesInOffersReplyEvent>(change);
         }
     }
 }
