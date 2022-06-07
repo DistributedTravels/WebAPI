@@ -1,4 +1,5 @@
 ﻿using Models.Offers;
+using Models.Offers.Dto;
 
 namespace WebAPI.Repositories
 {
@@ -9,9 +10,23 @@ namespace WebAPI.Repositories
         {
             _events = new List<ChangedOfferEvent>();
         }
-        public IEnumerable<ChangedOfferEvent> GetLastChanges()
+        public IEnumerable<ChangedOfferEvent> GetLastChanges(int number)
         {
-            return _events.Select(e => e).Take(10).ToList();
+            var actualNumber = number;
+            if(number > _events.Count())
+            {
+                actualNumber = _events.Count();
+            }
+            var lastChanges = _events.Select(e => e).Take(actualNumber).ToList();
+            for(var i = actualNumber; i < number ; i++)
+            {
+                lastChanges.Add(new ChangedOfferEvent()
+                {
+                    oldOffer = new TripDto(),
+                    newOffer = new TripDto()
+                });
+            }
+            return lastChanges;
         }
         public void SaveLastChange(ChangedOfferEvent changedOfferEvent)
         {

@@ -108,7 +108,7 @@ namespace WebAPI.Controllers
         [Route("GetLastChanges")]
         public async Task<IEnumerable<ChangedOfferEvent>> GetLastChanges()
         {
-            return _lastChangesRepository.GetLastChanges();
+            return _lastChangesRepository.GetLastChanges(10);
         }
         [HttpPost]
         [Route("AddChanges")]

@@ -4,7 +4,7 @@ namespace WebAPI.Repositories
 {
     public interface ILastChangesRepository
     {
-        public IEnumerable<ChangedOfferEvent> GetLastChanges();
+        public IEnumerable<ChangedOfferEvent> GetLastChanges(int number);
         public void SaveLastChange(ChangedOfferEvent changedOfferEvent);
     }
 }
