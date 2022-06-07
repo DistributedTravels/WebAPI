@@ -2,6 +2,7 @@
 using MassTransit;
 using Models.Offers;
 using Models.Offers.Dto;
+using WebAPI.Repositories;
 using Models.Hotels;
 using Models.Transport;
 using Models.WebAPI;
@@ -16,13 +17,17 @@ namespace WebAPI.Controllers
         readonly IRequestClient<GetOffersEvent> _getOffersClient;
         readonly IRequestClient<GetInfoFromHotelEvent> _hotelsClient;
         readonly IRequestClient<GetAvailableTravelsEvent> _travelsClient;
+        readonly IRequestClient<ChangesInOffersEvent> _changesInOffersClient;
+        readonly ILastChangesRepository _lastChangesRepository;
 
         public OffersController(IRequestClient<GetOffersEvent> getOffersClient, IRequestClient<GetInfoFromHotelEvent> hotelsClient,
-            IRequestClient<GetAvailableTravelsEvent> travelsClient)
+            IRequestClient<GetAvailableTravelsEvent> travelsClient, ILastChangesRepository lastChangesRepository, IRequestClient<ChangesInOffersEvent> changesInOffersClient)
         {
             _getOffersClient = getOffersClient;
             _hotelsClient = hotelsClient;
             _travelsClient = travelsClient;
+            _lastChangesRepository = lastChangesRepository;
+            _changesInOffersClient = changesInOffersClient;
         }
 
         [HttpGet]
@@ -98,6 +103,18 @@ namespace WebAPI.Controllers
                 Answer = offerAvailable,
                 Price = Math.Round(totalPrice, 2)
             };
+        }
+        [HttpGet]
+        [Route("GetLastChanges")]
+        public async Task<IEnumerable<ChangedOfferEvent>> GetLastChanges()
+        {
+            return _lastChangesRepository.GetLastChanges();
+        }
+        [HttpPost]
+        [Route("AddChanges")]
+        public async Task AddChanges([FromBody] ChangesInOffersEvent change)
+        {
+            _changesInOffersClient.GetResponse<>
         }
     }
 }
