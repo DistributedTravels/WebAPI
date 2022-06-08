@@ -27,6 +27,11 @@ builder.Services.AddSingleton<ILastChangesRepository, LastChangesRepository>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMassTransit(cfg =>
 {
+    cfg.AddConsumer<ChangedReservationEventConsumer>(context =>
+    {
+        context.UseMessageRetry(r => r.Interval(3, 1000));
+        context.UseInMemoryOutbox();
+    });
     cfg.AddConsumer<NewReservationSuccessfullyBookedEventConsumer>(context =>
     {
         context.UseMessageRetry(r => r.Interval(3, 1000));
