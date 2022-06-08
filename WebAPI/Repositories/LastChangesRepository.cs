@@ -22,8 +22,8 @@ namespace WebAPI.Repositories
             {
                 lastChanges.Add(new ChangedOfferEvent()
                 {
-                    oldOffer = new TripDto(),
-                    newOffer = new TripDto()
+                    OldOffer = new TripDto(),
+                    NewOffer = new TripDto()
                 });
             }
             return lastChanges;
