@@ -18,14 +18,6 @@ namespace WebAPI.Repositories
                 actualNumber = _events.Count();
             }
             var lastChanges = _events.Select(e => e).Take(actualNumber).ToList();
-            for(var i = actualNumber; i < number ; i++)
-            {
-                lastChanges.Add(new ChangedOfferEvent()
-                {
-                    OldOffer = new TripDto(),
-                    NewOffer = new TripDto()
-                });
-            }
             return lastChanges;
         }
         public void SaveLastChange(ChangedOfferEvent changedOfferEvent)
