@@ -17,7 +17,7 @@ namespace WebAPI.Repositories
             {
                 actualNumber = _events.Count();
             }
-            var lastChanges = _events.Select(e => e).Take(actualNumber).ToList();
+            var lastChanges = _events.Select(e => e).Reverse().Take(actualNumber).ToList();
             return lastChanges;
         }
         public void SaveLastChange(ChangedOfferEvent changedOfferEvent)
